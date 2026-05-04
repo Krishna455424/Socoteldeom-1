@@ -10,37 +10,58 @@ def load_charts():
 
     for file in os.listdir(DASHBOARD_DIR):
         if file.endswith(".json"):
-            with open(os.path.join(DASHBOARD_DIR, file)) as f:
+            path = os.path.join(DASHBOARD_DIR, file)
+
+            with open(path, "r") as f:
                 data = json.load(f)
+
+            # validate input schema
+            if "chartTitle" not in data or "metric" not in data:
+                raise Exception(f"Invalid file: {file}")
 
             charts.append({
                 "id": file.replace(".json", ""),
-                "metric": data["metric"],
-                "title": data["chartTitle"]
+                "title": data["chartTitle"],
+                "metric": data["metric"]
             })
 
     return charts
 
 
 def build_dashboard(charts):
-    return {
+    dashboard = {
         "name": "GitOps Infra Dashboard",
         "description": "Auto-generated via Observability as Code",
-        "charts": [
-            {
-                "chartId": f"chart_{c['id']}_{i}",
-                "programText": f"A = data('{c['metric']}').publish(label='{c['title']}')"
-            }
-            for i, c in enumerate(charts)
-        ]
+        "charts": []
     }
 
+    for i, c in enumerate(charts):
+        dashboard["charts"].append({
+            "chartId": f"chart_{c['id']}_{i}",   # ✅ safe ID
+            "name": c["title"],                 # allowed at chart level in O11y dashboard API
+            "chartConfig": {
+                "type": "TimeSeriesChart",
+                "programOptions": {
+                    "signalflowProgram": (
+                        f"data('{c['metric']}')"
+                        f".publish(label='{c['title']}')"
+                    )
+                }
+            }
+        })
 
-if __name__ == "__main__":
+    return dashboard
+
+
+def main():
     charts = load_charts()
     dashboard = build_dashboard(charts)
 
     with open(OUTPUT_FILE, "w") as f:
         json.dump(dashboard, f, indent=2)
 
-    print("✅ dashboard.json regenerated cleanly")
+    print("✅ dashboard.json generated successfully")
+
+
+if __name__ == "__main__":
+    main()
