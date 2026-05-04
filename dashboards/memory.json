@@ -1,0 +1,5 @@
+{
+  "chartTitle": "Memory Utilization",
+  "metric": "memory.utilization",
+  "chartType": "timeseries"
+}
