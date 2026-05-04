@@ -1,4 +1,13 @@
 {
-  "chartTitle": "CPU Utilization",
-  "metric": "cpu.utilization"
+  "name": "krishna",
+  "groupId": "HHdO3BuAwAA",
+  "charts": [
+    {
+      "chartId": "HHda1R_A0AA",
+      "column": 0,
+      "height": 1,
+      "row": 0,
+      "width": 6
+    }
+  ]
 }
