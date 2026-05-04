@@ -1,4 +1,4 @@
 {
   "chartTitle": "CPU Utilization",
-  "metric": "cpu.utilization",
+  "metric": "cpu.utilization"
 }
