@@ -34,3 +34,6 @@ jobs:
           -H "Content-Type: application/json" \
           -H "X-SF-TOKEN: ${{ secrets.SPLUNK_TOKEN }}" \
           -d @dashboard.json
+
+      - name: Remove old dashboard.json
+        run: rm -f dashboard.json
