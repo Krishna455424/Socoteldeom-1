@@ -45,7 +45,7 @@ def build_dashboard(charts):
 
     for c in charts:
         dashboard["charts"].append({
-            "chartId": c["id"],   # ✅ NO UUID, NO SPECIAL CHARS
+            "chartId": f"chart_{c['id']}_1",   # ✅ NO UUID, NO SPECIAL CHARS
             "name": c["title"],
             "programText": (
                 f"A = data('{c['metric']}')"
