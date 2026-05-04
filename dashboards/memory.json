@@ -1,4 +1,4 @@
 {
   "chartTitle": "Memory Utilization",
-  "metric": "memory.utilization",
+  "metric": "memory.utilization"
 }
