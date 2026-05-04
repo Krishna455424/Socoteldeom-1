@@ -1,5 +1,4 @@
 {
   "chartTitle": "CPU Utilization",
   "metric": "cpu.utilization",
-  "chartType": "timeseries"
 }
