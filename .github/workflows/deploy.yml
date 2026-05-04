@@ -1,15 +1,49 @@
-- name: Clean old file
-  run: rm -f dashboard.json
+name: Splunk Observability as Code
 
-- name: Build dashboard
-  run: python scripts/build_dashboard.py
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'dashboards/**'
+      - 'scripts/**'
+      - '.github/workflows/**'
 
-- name: Show output
-  run: cat dashboard.json
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
 
-- name: Deploy
-  run: |
-    curl -X POST https://api.us1.signalfx.com/v2/dashboard \
-    -H "Content-Type: application/json" \
-    -H "X-SF-TOKEN: ${{ secrets.SPLUNK_TOKEN }}" \
-    -d @dashboard.json
+    steps:
+      # 1. Checkout repo
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Setup Python
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      # 3. Clean old output (IMPORTANT)
+      - name: Clean old dashboard file
+        run: rm -f dashboard.json
+
+      # 4. Build dashboard JSON
+      - name: Build Splunk Dashboard JSON
+        run: python scripts/build_dashboard.py
+
+      # 5. Debug: show generated payload (VERY IMPORTANT)
+      - name: Show generated dashboard.json
+        run: cat dashboard.json
+
+      # 6. Validate JSON (optional safety check)
+      - name: Validate JSON
+        run: python -m json.tool dashboard.json
+
+      # 7. Deploy to Splunk Observability Cloud
+      - name: Deploy Dashboard to Splunk O11y
+        run: |
+          curl -X POST https://api.us1.signalfx.com/v2/dashboard \
+          -H "Content-Type: application/json" \
+          -H "X-SF-TOKEN: ${{ secrets.SPLUNK_TOKEN }}" \
+          -d @dashboard.json
